@@ -1,4 +1,4 @@
-# RubyInterface
+# RubyInterface [![Build Status](https://travis-ci.org/kklimuk/ruby_interface.svg?branch=master)](https://travis-ci.org/kklimuk/ruby_interface)
 
 When a class is interpreted and does not have the required methods, it throws an error.
 
