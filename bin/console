@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+
+require 'bundler/setup'
+
+require 'irb'
+require 'irb/completion'
+require 'awesome_print'
+require 'ruby_interface'
+ARGV.clear
+IRB.start
