@@ -3,7 +3,7 @@
 When a class is interpreted and does not have the required methods, it throws an error.
 
 Caveats:
-- creating anonymous classes will not work with this gem as they use an alternate mechanism.
+- Creating anonymous classes requires the user to use `class_eval` to define methods.
 
 ## Installation
 
@@ -23,6 +23,8 @@ Or install it yourself as:
 
 ## Usage
 
+### Named Classes
+
 ```ruby
 class SpaceShip
   include RubyInterface
@@ -35,14 +37,30 @@ end
 # => NotImplementedError, 'Expected Enterprise to define #engine, #computer'
 ```
 
+If a class is redefined, the presence of required methods will not be checked. 
+
+### Anonymous classes
+
+```ruby
+class SpaceShip
+  include RubyInterface
+
+  defines :engine, :computer
+end
+
+space_ship = Class.new(SpaceShip)
+space_ship.class_eval { }
+# => NotImplementedError, 'Expected Enterprise to define #engine, #computer'
+```
+
+After the first `class_eval`, the rest of the calls to it will not check whether methods are defined.
+Unfortunately, right now, `class_eval` has to be called to check whether the methods are defined,
+ pending resolution of https://bugs.ruby-lang.org/issues/12696.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies.
 You can also run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`.
-To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`,
-which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
