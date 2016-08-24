@@ -75,6 +75,40 @@ describe RubyInterface do
       it { expect { subject }.to_not raise_error }
     end
 
+    context 'when class body is defined with Class::new' do
+      let(:subklass) { Class.new(klass) {} }
+
+      it do
+        expect { subject }.to raise_error NotImplementedError, 'Expected anonymous class to define #hello, #world'
+      end
+
+      context 'and the methods are defined' do
+        let(:subklass) do
+          Class.new(klass) do
+            def hello; end
+            def world; end
+          end
+        end
+
+        it { expect { subject }.to_not raise_error }
+      end
+
+      context 'when class_eval is called after definition' do
+        context 'and the methods are defined' do
+          let(:subklass) do
+            subklass = Class.new(klass) do
+              def hello; end
+              def world; end
+            end
+            subklass.class_eval {}
+            subklass
+          end
+
+          it { expect { subject }.to_not raise_error }
+        end
+      end
+    end
+
     context 'when class_eval is called twice' do
       let(:subklass) do
         subklass = Class.new(klass)

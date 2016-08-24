@@ -1,4 +1,5 @@
 require 'ruby_interface/version'
+require 'class'
 require 'awesome_print'
 
 module RubyInterface
@@ -34,7 +35,21 @@ module RubyInterface
     private
 
     def anonymous_class_definition(child)
+      define_class_hook child
+      redefine_eval_and_exec child
+    end
+
+    def define_class_hook(child)
       klass = self
+      child.define_singleton_method :anonymous_class_defined do
+        klass.track_required_methods(child)
+        revert_eval_and_exec
+      end
+    end
+
+    def redefine_eval_and_exec(child)
+      klass = self
+
       [:class_exec, :class_eval].each do |method|
         old_method = "_old_#{method}".to_sym
         child.singleton_class.send(:alias_method, old_method, method)
@@ -42,8 +57,15 @@ module RubyInterface
         child.define_singleton_method method do |*args, &block|
           send old_method, *args, &block
           klass.track_required_methods(child)
-          child.singleton_class.send(:alias_method, method, old_method)
+          revert_eval_and_exec
         end
+      end
+    end
+
+    def revert_eval_and_exec
+      [:class_exec, :class_eval].each do |method|
+        old_method = "_old_#{method}".to_sym
+        singleton_class.send(:alias_method, method, old_method)
       end
     end
 

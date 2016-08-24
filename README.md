@@ -2,8 +2,8 @@
 
 When a class is interpreted and does not have the required methods, it throws an error.
 
-Caveats:
-- Creating anonymous classes requires the user to use `class_eval` to define methods.
+Since classes in ruby are never closed, the check for required methods will run
+ *only* on the *first* definition of the class body.
 
 ## Installation
 
@@ -35,9 +35,7 @@ end
 class Enterprise < SpaceShip
 end
 # => NotImplementedError, 'Expected Enterprise to define #engine, #computer'
-```
-
-If a class is redefined, the presence of required methods will not be checked. 
+``` 
 
 ### Anonymous classes
 
@@ -48,14 +46,18 @@ class SpaceShip
   defines :engine, :computer
 end
 
+# If the block is passed in to Class::new
+space_ship = Class.new(SpaceShip) { }
+# => NotImplementedError, 'Expected Enterprise to define #engine, #computer'
+
+# If the block is not passed in to Class::new
 space_ship = Class.new(SpaceShip)
 space_ship.class_eval { }
-# => NotImplementedError, 'Expected Enterprise to define #engine, #computer'
-```
 
-After the first `class_eval`, the rest of the calls to it will not check whether methods are defined.
-Unfortunately, right now, `class_eval` has to be called to check whether the methods are defined,
- pending resolution of https://bugs.ruby-lang.org/issues/12696.
+# => NotImplementedError, 'Expected Enterprise to define #engine, #computer'
+# NOTE: After the first `class_eval`, the rest of the calls to it will not check whether methods are defined.
+# NOTE: `class_exec` may also be used instead of `class_eval`
+```
 
 ## Development
 
