@@ -27,12 +27,24 @@ module RubyInterface
 
       return if missing_methods.empty?
 
-      message = "Expected #{child.name || 'anonymous class'} to define "
-      message << missing_methods.map { |method| "##{method}" }.join(', ')
-      raise NotImplementedError, message
+      raise_class_definition_error child, missing_methods
     end
 
     private
+
+    def raise_class_definition_error(child, missing_methods)
+      message = "Expected #{child.name || 'anonymous class'} to define "
+      message << missing_methods.map { |method| "##{method}" }.join(', ')
+
+      raise NotImplementedError, message
+    rescue NotImplementedError => exception
+      directory = File.dirname(__FILE__)
+      better_backtrace = exception.backtrace.drop_while do |element|
+        element.include? directory
+      end
+      exception.set_backtrace better_backtrace
+      raise exception
+    end
 
     def anonymous_class_definition(child)
       define_class_hook child
