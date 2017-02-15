@@ -1,9 +1,6 @@
 # RubyInterface [![Build Status](https://travis-ci.org/kklimuk/ruby_interface.svg?branch=master)](https://travis-ci.org/kklimuk/ruby_interface)
 
-When a class is interpreted and does not have the required methods, it throws an error.
-
-Since classes in ruby are never closed, the check for required methods will run
- *only* on the *first* definition of the class body.
+Allows you to create abstract classes and interfaces in Ruby.
 
 ## Installation
 

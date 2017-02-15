@@ -1,6 +1,5 @@
 require 'ruby_interface/version'
 require 'class'
-require 'awesome_print'
 
 module RubyInterface
   def self.included(klass)

@@ -1,3 +1,6 @@
+# 0.3.1
+- Allow the gem to function without `awesome_print`.
+
 # 0.3.0
 - Since https://bugs.ruby-lang.org/issues/12696 was resolved with a doc change:
   - Enabled checks whenever anonymous classes are defined with a block by 
